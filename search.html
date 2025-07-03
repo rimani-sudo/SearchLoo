@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Logo" class="small-logo">
+        <form action="search.html" method="GET">
+            <input type="text" name="q" class="search-box" value="">
+        </form>
+    </header>
+    <div id="search-results"></div>
+    <script>
+        // সার্চ কোয়েরি ডাটা আনুন
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q');
+        document.querySelector('.search-box').value = query;
+
+        // Google Programmable Search API ব্যবহার করুন
+        const cx = 'YOUR_SEARCH_ENGINE_ID'; // এখানে আপনার Search Engine ID দিন
+        const apiKey = 'YOUR_API_KEY'; // Google Cloud API Key
+
+        fetch(`https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${query}`)
+            .then(response => response.json())
+            .then(data => displayResults(data.items))
+            .catch(error => console.error(error));
+
+        function displayResults(items) {
+            const container = document.getElementById('search-results');
+            items.forEach(item => {
+                container.innerHTML += `
+                    <div class="result">
+                        <a href="${item.link}" class="title">${item.title}</a>
+                        <p class="url">${item.displayLink}</p>
+                        <p class="snippet">${item.snippet}</p>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
